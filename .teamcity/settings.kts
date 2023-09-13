@@ -1,6 +1,7 @@
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.maven
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -27,6 +28,8 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 version = "2023.05"
 
 project {
+    vcsRoot(MyVcsRoot)
+
     val bts = sequential{
         buildType(Maven("Build", "clean compile"))
         parallel{
@@ -44,12 +47,18 @@ project {
     }
 }
 
+object MyVcsRoot : GitVcsRoot({
+    name = DslContext.getParameter("vcsName")
+    url = DslContext.getParameter("vcsUrl")
+    branch = DslContext.getParameter("vcsBranch", "refs/heads/main")
+})
+
 class Maven(name: String, goals: String, runnerArgs: String? = null) : BuildType({
     id(name.toId())
     this.name = name
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(MyVcsRoot)
     }
 
     steps {
