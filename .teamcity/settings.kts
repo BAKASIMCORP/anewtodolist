@@ -31,28 +31,11 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 version = "2022.10"
 
 project {
-
-    buildType(Blahblah)
     buildType(Build)
 }
 
-object Blahblah : BuildType({
-    name = "Blahblah"
-
-    vcs {
-        root(DslContext.settingsRoot)
-    }
-
-    dependencies {
-        snapshot(Build) {
-        }
-    }
-})
-
 object Build : BuildType({
     name = "Build"
-
-    artifactRules = "target/*.jar"
 
     vcs {
         root(DslContext.settingsRoot)
@@ -61,29 +44,12 @@ object Build : BuildType({
     steps {
         maven {
             enabled = false
-            goals = "clean package"
-            dockerImage = "maven:latest"
-        }
-        script {
-            name = "qqq"
-            scriptContent = "docker run --rm -v ${'$'}PWD:/workdir jetbrains/intellij-http-client -D run.http --report"
+            goals = "clean test"
         }
     }
 
     triggers {
         vcs {
-        }
-        schedule {
-            schedulingPolicy = weekly {
-            }
-            triggerBuild = always()
-        }
-    }
-
-    features {
-        xmlReport {
-            reportType = XmlReport.XmlReportType.SUREFIRE
-            rules = "reports/**/*.xml"
         }
     }
 })
