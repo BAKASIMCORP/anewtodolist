@@ -43,7 +43,7 @@ object Build : BuildType({
 
     steps {
         maven {
-            val goalName = "clean package"
+            val goalName = "clean test"
             name = "my custom step name"
             enabled = false
             goals = goalName
